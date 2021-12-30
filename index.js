@@ -1,15 +1,13 @@
-(fakeSpaNavigation = () => {
-    function getClosestElement(el, fn) {
-        return el && (fn(el) ? el : closest(el.parentNode, fn));
-    }
+// Need something similar to jQuery's .closest, to get the first parent A tag from clicked element.
+var getClosestElement = (el, fn) => el && (fn(el) ? el : closest(el.parentNode, fn));
 
+(setupFakeSpaLinks = () => {
     const parser = new DOMParser()
-    let tags = document.querySelectorAll('a')
+    const tags = document.querySelectorAll('a')
 
     function linkHandler (e) {
         e.preventDefault(true);
         e.stopPropagation();
-
 
         const next = fetch(e.target.href).then(body => {
             return body.text()
@@ -40,12 +38,12 @@
                 e.target.removeEventListener('click', this);
 
                 // Finally try to fetch all new links that should be present
-                return () => fakeSpaNavigation();
+                return () => setupFakeSpaLinks();
             })
-
-        // Done
+        // Promise resolved
     }
 
+    // Add link handler to all A tags
     if (tags.length) {
         tags.forEach(a => {
             a.addEventListener('click', linkHandler);
